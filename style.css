@@ -800,9 +800,15 @@
   }
 
   /* Helper classes para estados de scroll */
-  body.game-mode-active,
+  body.game-mode-active {
+    overflow: hidden !important;
+  }
+
   body.overlay-active {
     overflow: hidden !important;
+    position: fixed; /* Fuerza el bloqueo de scroll táctil en celulares */
+    width: 100%;
+    height: 100%;
   }
 
   body.game-mode-active #stars-canvas {
