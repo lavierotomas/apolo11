@@ -11,29 +11,37 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-const stars = Array.from({ length: 220 }, () => ({
-  x: Math.random(),
-  y: Math.random(),
-  r: Math.random() * 1.3 + 0.2,
-  a: Math.random(),
-  speed: Math.random() * 0.004 + 0.001,
-  phase: Math.random() * Math.PI * 2
-}));
+const stars = Array.from({ length: 220 }, () => {
+  const r = Math.random() * 1.3 + 0.2;
+  return {
+    x: Math.random(),
+    y: Math.random(),
+    r: r,
+    a: Math.random(),
+    speed: Math.random() * 0.004 + 0.001,
+    phase: Math.random() * Math.PI * 2,
+    depth: (r / 1.5) * 0.35 + 0.05 // Estrellas más grandes (cercanas) se mueven más rápido con el scroll
+  };
+});
 
 let frame = 0;
 function drawStars() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   frame += 0.01;
+  const scrollY = window.scrollY || 0;
   stars.forEach(s => {
     const alpha = s.a * (0.6 + 0.4 * Math.sin(frame * s.speed * 30 + s.phase));
+    let y = (s.y * canvas.height - scrollY * s.depth) % canvas.height;
+    if (y < 0) y += canvas.height;
     ctx.beginPath();
-    ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+    ctx.arc(s.x * canvas.width, y, s.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(200, 215, 255, ${alpha})`;
     ctx.fill();
   });
   requestAnimationFrame(drawStars);
 }
 drawStars();
+
 
 // ============================================================================
 // 2. SCROLL REVEAL Y BIBLIOGRAFÍA (Mantenido del original)
@@ -45,6 +53,85 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 reveals.forEach(el => io.observe(el));
+
+// ============================================================================
+// 2B. CONTROLADOR DE DESPLAZAMIENTO PARALLAX (Modo Informativo)
+// ============================================================================
+function updateParallax() {
+  // Evitar ejecutar si estamos en modo simulación
+  if (document.body.classList.contains('game-mode-active')) return;
+
+  const scrollY = window.scrollY || window.pageYOffset;
+  const viewportHeight = window.innerHeight;
+
+  // 1. Parallax para todos los elementos cósmicos .parallax-element
+  const parallaxElements = document.querySelectorAll('.parallax-element');
+  parallaxElements.forEach(el => {
+    const parent = el.closest('.section') || el.closest('.hero');
+    if (!parent) return;
+
+    const rect = parent.getBoundingClientRect();
+    const parentTop = rect.top + scrollY;
+
+    // Solo recalcular si la sección contenedora está visible en el viewport
+    if (rect.top < viewportHeight && rect.bottom > 0) {
+      const speed = parseFloat(el.getAttribute('data-parallax-speed')) || 0.15;
+      const relativeScroll = scrollY - parentTop;
+      const translateY = relativeScroll * speed;
+      
+      // Aplicar traslación 3D para activar la aceleración por GPU
+      el.style.transform = `translate3d(0, ${translateY}px, 0)`;
+    }
+  });
+
+  // 2. Parallax de la Luna en el Hero
+  const moon = document.querySelector('.moon-visual');
+  if (moon) {
+    const parent = moon.closest('.hero');
+    if (parent) {
+      const rect = parent.getBoundingClientRect();
+      if (rect.top < viewportHeight && rect.bottom > 0) {
+        const translateY = scrollY * 0.28;
+        moon.style.transform = `translate3d(0, ${translateY}px, 0)`;
+      }
+    }
+  }
+
+  // 3. Parallax de separación en textos del Hero
+  const heroTitle = document.querySelector('.hero-title');
+  const heroDesc = document.querySelector('.hero-desc');
+  if (heroTitle) {
+    const rect = heroTitle.parentElement.getBoundingClientRect();
+    if (rect.top < viewportHeight && rect.bottom > 0) {
+      heroTitle.style.transform = `translate3d(0, ${scrollY * -0.06}px, 0)`;
+    }
+  }
+  if (heroDesc) {
+    const rect = heroDesc.parentElement.getBoundingClientRect();
+    if (rect.top < viewportHeight && rect.bottom > 0) {
+      heroDesc.style.transform = `translate3d(0, ${scrollY * 0.08}px, 0)`;
+    }
+  }
+}
+
+// Escuchador del scroll optimizado mediante ticking y requestAnimationFrame (evita layout thrashing)
+let isScrolling = false;
+window.addEventListener('scroll', () => {
+  if (!isScrolling) {
+    window.requestAnimationFrame(() => {
+      updateParallax();
+      isScrolling = false;
+    });
+    isScrolling = true;
+  }
+}, { passive: true });
+
+// Inicializar la posición al cargar la página
+window.addEventListener('DOMContentLoaded', updateParallax);
+// También ejecutar inmediatamente por si ya se cargó la página
+updateParallax();
+
+
 
 function toggleBiblio(id) {
   const el = document.getElementById(id);
@@ -88,11 +175,53 @@ function toggleBiblio(id) {
     wrap.classList.remove('is-playing');
   });
 
+  const volumeSlider = document.getElementById('kennedyVolumeSlider');
+  let lastVolume = 0.5; // Guarda el último volumen no nulo
+
+  function updateVolumeUI() {
+    if (vid.muted || vid.volume === 0) {
+      soundBtn.textContent = '🔇 Activar sonido';
+      if (volumeSlider) volumeSlider.value = 0;
+    } else {
+      soundBtn.textContent = '🔊 Sonido activado';
+      if (volumeSlider) volumeSlider.value = vid.volume;
+    }
+  }
+
+  // Inicializar slider según estado inicial
+  if (volumeSlider) {
+    volumeSlider.value = vid.muted ? 0 : vid.volume;
+  }
+
   soundBtn.addEventListener('click', function (e) {
     e.stopPropagation();
-    vid.muted = !vid.muted;
-    soundBtn.textContent = vid.muted ? '🔇 Activar sonido' : '🔊 Sonido activado';
+    if (vid.muted) {
+      vid.muted = false;
+      vid.volume = lastVolume > 0 ? lastVolume : 0.5;
+    } else {
+      vid.muted = true;
+    }
+    updateVolumeUI();
   });
+
+  if (volumeSlider) {
+    volumeSlider.addEventListener('input', function (e) {
+      e.stopPropagation();
+      const val = parseFloat(volumeSlider.value);
+      vid.volume = val;
+      if (val > 0) {
+        vid.muted = false;
+        lastVolume = val;
+      } else {
+        vid.muted = true;
+      }
+      updateVolumeUI();
+    });
+
+    volumeSlider.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+  }
 
   const videoObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -284,25 +413,56 @@ const GameController = {
     this.btnToggle.addEventListener('click', () => this.toggleMode());
     this.btnAbort.addEventListener('click', () => this.abortMission());
     
-    // Listeners para el Overlay de Elección Inicial
+    // Listeners para el Overlay de Elección Inicial e Intermedio de Tripulación
     const overlay = document.getElementById('choice-overlay');
+    const crewOverlay = document.getElementById('crew-overlay');
     const btnInfo = document.getElementById('btn-mode-info');
     const btnGame = document.getElementById('btn-mode-game');
+    const btnCrewLaunch = document.getElementById('btn-crew-launch');
+    let selectedMode = '';
+
+    const proceedToExperience = (mode) => {
+      selectedMode = mode;
+      SoundSynth.init();
+      SoundSynth.playClick();
+      overlay.classList.add('hidden');
+      if (crewOverlay) {
+        crewOverlay.classList.remove('hidden');
+        setTimeout(() => {
+          SoundSynth.playSuccess();
+        }, 200);
+      } else {
+        launchMode();
+      }
+    };
+
+    const launchMode = () => {
+      SoundSynth.playClick();
+      if (crewOverlay) {
+        crewOverlay.classList.add('hidden');
+      }
+      if (selectedMode === 'info') {
+        this.logMessage('MODO INFORMATIVO SELECCIONADO.');
+      } else if (selectedMode === 'game') {
+        this.toggleMode(); // Inicia la simulación usando el método original
+      }
+    };
 
     if (btnInfo && overlay) {
       btnInfo.addEventListener('click', () => {
-        SoundSynth.init();
-        SoundSynth.playClick();
-        overlay.classList.add('hidden');
-        this.logMessage('MODO INFORMATIVO SELECCIONADO.');
+        proceedToExperience('info');
       });
     }
 
     if (btnGame && overlay) {
       btnGame.addEventListener('click', () => {
-        SoundSynth.init();
-        overlay.classList.add('hidden');
-        this.toggleMode(); // Activa el modo juego directamente
+        proceedToExperience('game');
+      });
+    }
+
+    if (btnCrewLaunch) {
+      btnCrewLaunch.addEventListener('click', () => {
+        launchMode();
       });
     }
 

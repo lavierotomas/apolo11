@@ -401,38 +401,90 @@
 
   .video-play-center .video-play-btn svg { fill: #050810; margin-left: 4px; }
 
-  .video-sound-toggle {
+  .video-controls-overlay {
     position: absolute;
     bottom: 14px;
     right: 14px;
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: rgba(5, 8, 16, 0.75);
     border: 1px solid rgba(245,200,66,0.35);
+    padding: 8px 14px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .video-embed-wrap.is-playing .video-controls-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .video-controls-overlay:hover {
+    border-color: var(--gold);
+    background: rgba(5, 8, 16, 0.9);
+  }
+
+  .video-controls-overlay .video-sound-toggle {
+    position: static;
+    background: transparent;
+    border: none;
+    padding: 0;
     color: var(--white);
     font-family: 'Space Mono', monospace;
     font-size: 11px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 8px 14px;
-    border-radius: 20px;
     cursor: pointer;
-    backdrop-filter: blur(6px);
-    transition: border-color 0.2s, background 0.2s;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .video-embed-wrap.is-playing .video-sound-toggle {
     opacity: 1;
     pointer-events: auto;
   }
 
-  .video-sound-toggle:hover {
-    border-color: var(--gold);
-    background: rgba(5, 8, 16, 0.9);
+  .video-volume-slider-wrap {
+    display: flex;
+    align-items: center;
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .video-controls-overlay:hover .video-volume-slider-wrap,
+  .video-controls-overlay:focus-within .video-volume-slider-wrap {
+    width: 80px;
+  }
+
+  .video-volume-slider-wrap input[type="range"] {
+    width: 75px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+
+  .video-volume-slider-wrap input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+  }
+
+  .video-volume-slider-wrap input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(245, 200, 66, 0.8);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .video-volume-slider-wrap input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
   }
 
   .video-label {
@@ -961,6 +1013,177 @@
     .choice-content { margin-top: 0; }
     .choice-cards { grid-template-columns: 1fr; }
     .choice-card { padding: 35px 25px; }
+  }
+
+  /* ============================================================================
+     CREW OVERLAY STYLES
+     ============================================================================ */
+  #crew-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: radial-gradient(circle at center, #0a1128 0%, #050810 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    backdrop-filter: blur(20px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+    overflow-y: auto;
+  }
+
+  #crew-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .crew-content {
+    max-width: 1100px;
+    width: 100%;
+    text-align: center;
+    margin: auto 0;
+    animation: contentFadeUp 1s ease-out;
+  }
+
+  .crew-header {
+    margin-bottom: 40px;
+  }
+
+  .crew-header .tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .crew-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .crew-header p {
+    font-size: 15px;
+    color: var(--silver);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+
+  .crew-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .crew-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 25px 20px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .crew-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(245, 200, 66, 0.3);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 15px 30px rgba(245, 200, 66, 0.1);
+  }
+
+  .crew-photo-wrap {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    background: #080d1a;
+  }
+
+  .crew-card:hover .crew-photo-wrap {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245, 200, 66, 0.3);
+    transform: scale(1.05);
+  }
+
+  .crew-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .crew-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .crew-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    opacity: 0.85;
+    letter-spacing: 1px;
+  }
+
+  .crew-footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Adaptabilidad Responsiva para Tripulación */
+  @media (max-width: 991px) {
+    .crew-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    #crew-overlay {
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+    .crew-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .crew-photo-wrap {
+      width: 90px;
+      height: 90px;
+    }
+    .crew-name {
+      font-size: 11px;
+    }
+    .crew-role {
+      font-size: 9px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .crew-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .system-status {
@@ -2088,4 +2311,180 @@
   .archive-btn:hover {
     background: rgba(51, 255, 51, 0.15);
   }
+
+/* ============================================================================
+   PARALLAX ELEMENTS STYLES
+   ============================================================================ */
+.parallax-element {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.04; /* Opacidad baja por defecto en móviles/pantallas pequeñas */
+  will-change: transform;
+  transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 50%; /* Hace que las imágenes sean circulares */
+  overflow: hidden; /* Recorta la imagen a la forma circular */
+  background: rgba(5, 8, 16, 0.6); /* Fondo oscuro detrás para contraste */
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.parallax-element img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ajusta la imagen sin deformarla */
+  display: block;
+  opacity: 0.85; /* Integración visual en el fondo oscuro */
+  transition: opacity 0.3s ease;
+}
+
+/* Configuraciones individuales para cada gráfico y sus marcos brillantes */
+.hero-spacecraft {
+  right: 5%;
+  top: 15%;
+  width: 100px;
+  height: 100px;
+  border-color: rgba(245, 200, 66, 0.35);
+  box-shadow: 0 0 25px rgba(245, 200, 66, 0.25), inset 0 0 15px rgba(245, 200, 66, 0.15);
+  opacity: 0.1;
+}
+.hero-spacecraft img {
+  animation: float-spacecraft 9s ease-in-out infinite;
+}
+
+.s1-graphic {
+  left: 5%;
+  top: 25%;
+  width: 110px;
+  height: 110px;
+  border-color: rgba(110, 168, 254, 0.35);
+  box-shadow: 0 0 25px rgba(110, 168, 254, 0.25), inset 0 0 15px rgba(110, 168, 254, 0.15);
+}
+.s1-graphic img {
+  animation: float-sputnik 14s ease-in-out infinite;
+}
+
+.s2-graphic {
+  right: 5%;
+  top: 30%;
+  width: 110px;
+  height: 110px;
+  border-color: rgba(109, 211, 139, 0.35);
+  box-shadow: 0 0 25px rgba(109, 211, 139, 0.25), inset 0 0 15px rgba(109, 211, 139, 0.15);
+}
+.s2-graphic img {
+  animation: float-lander 16s ease-in-out infinite;
+}
+
+.s3-graphic {
+  left: 5%;
+  top: 25%;
+  width: 100px;
+  height: 100px;
+  border-color: rgba(245, 200, 66, 0.35);
+  box-shadow: 0 0 25px rgba(245, 200, 66, 0.25), inset 0 0 15px rgba(245, 200, 66, 0.15);
+}
+.s3-graphic img {
+  animation: float-astronaut 12s ease-in-out infinite;
+}
+
+.s4-graphic {
+  right: 5%;
+  top: 30%;
+  width: 110px;
+  height: 110px;
+  border-color: rgba(244, 123, 106, 0.35);
+  box-shadow: 0 0 25px rgba(244, 123, 106, 0.25), inset 0 0 15px rgba(244, 123, 106, 0.15);
+}
+.s4-graphic img {
+  animation: spin-earth 120s linear infinite; /* Rotación ultralenta y realista de la Tierra */
+}
+
+.s5-graphic {
+  left: 5%;
+  top: 30%;
+  width: 110px;
+  height: 110px;
+  border-color: rgba(167, 139, 250, 0.35);
+  box-shadow: 0 0 25px rgba(167, 139, 250, 0.25), inset 0 0 15px rgba(167, 139, 250, 0.15);
+}
+.s5-graphic img {
+  animation: float-satellite 11s ease-in-out infinite;
+}
+
+/* Estilos de escritorio: Mueve los gráficos a los márgenes exteriores */
+@media (min-width: 1200px) {
+  .parallax-element {
+    opacity: 0.18;
+  }
+  .hero-spacecraft {
+    right: 8%;
+    top: 22%;
+    width: 160px;
+    height: 160px;
+    opacity: 0.22;
+  }
+  .s1-graphic {
+    left: -190px;
+    top: 15%;
+    width: 190px;
+    height: 190px;
+  }
+  .s2-graphic {
+    right: -190px;
+    top: 20%;
+    width: 195px;
+    height: 195px;
+  }
+  .s3-graphic {
+    left: -180px;
+    top: 15%;
+    width: 175px;
+    height: 175px;
+  }
+  .s4-graphic {
+    right: -190px;
+    top: 18%;
+    width: 185px;
+    height: 185px;
+  }
+  .s5-graphic {
+    left: -190px;
+    top: 15%;
+    width: 195px;
+    height: 195px;
+  }
+}
+
+/* Definición de Keyframes de Flotación */
+@keyframes float-spacecraft {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes float-sputnik {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(-6deg); }
+}
+
+@keyframes float-lander {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+@keyframes float-astronaut {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(3deg); }
+}
+
+@keyframes spin-earth {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float-satellite {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-3deg); }
+}
 

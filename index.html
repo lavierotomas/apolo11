@@ -36,6 +36,76 @@
   </div>
 </div>
 
+<!-- CREW OVERLAY -->
+<div id="crew-overlay" class="hidden">
+  <div class="crew-content">
+    <div class="crew-header">
+      <div class="tagline">PROYECTO APOLO 11</div>
+      <h1>MIEMBROS DEL GRUPO</h1>
+    </div>
+
+    <div class="crew-grid">
+      <!-- Miembro 1: Tomas -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/tomas.png" alt="TOMAS FERNANDEZ LAVIERO">
+        </div>
+        <div class="crew-name">TOMAS FERNANDEZ LAVIERO</div>
+        
+      </div>
+      
+      <!-- Miembro 2: Alessio -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/alessio.png" alt="ALESSIO PEDRETTI">
+        </div>
+        <div class="crew-name">ALESSIO PEDRETTI</div>
+        
+      </div>
+
+      <!-- Miembro 3: Bautista -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/bautista.png" alt="BAUTISTA BALDASSIN">
+        </div>
+        <div class="crew-name">BAUTISTA BALDASSIN</div>
+        
+      </div>
+
+      <!-- Miembro 4: Francisco -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/francisco.png" alt="FRANCISCO NADDEO">
+        </div>
+        <div class="crew-name">FRANCISCO NADDEO</div>
+        
+      </div>
+
+      <!-- Miembro 5: Augusto -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/augusto.png" alt="AUGUSTO MOLINA">
+        </div>
+        <div class="crew-name">AUGUSTO MOLINA</div>
+        
+      </div>
+
+      <!-- Miembro 6: Joaquin -->
+      <div class="crew-card">
+        <div class="crew-photo-wrap">
+          <img src="images/joaquin.png" alt="JOAQUIN CRESPO">
+        </div>
+        <div class="crew-name">JOAQUIN CRESPO</div>
+        
+      </div>
+    </div>
+
+    <div class="crew-footer">
+      <button id="btn-crew-launch" class="glow-btn">INICIAR OPERACIÓN</button>
+    </div>
+  </div>
+</div>
+
 <canvas id="stars-canvas"></canvas>
 
 <!-- NAV -->
@@ -57,7 +127,7 @@
 <div id="mural-container">
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow">Historia 5 · Quinto Año · Trabajo Práctico</div>
+    <div class="hero-eyebrow">Historia · Quinto Año · Trabajo Práctico</div>
     <div class="hero-date-badge">
       <span>20 · JUL · 1969</span>
       <span style="opacity:0.3">|</span>
@@ -65,6 +135,10 @@
     </div>
 
     <div class="moon-visual"></div>
+
+    <div class="parallax-element hero-spacecraft" data-parallax-speed="0.22">
+      <img src="images/apollo_capsule.png" alt="Apolo 11 Nave">
+    </div>
 
     <h1 class="hero-title">
       <div class="line1">LA CARRERA</div>
@@ -81,6 +155,10 @@
 
   <!-- SECTION 1: CONTEXTO -->
   <section class="section s1 reveal" id="contexto">
+    <div class="parallax-element s1-graphic" data-parallax-speed="-0.15">
+      <img src="images/sputnik.png" alt="Sputnik 1">
+    </div>
+
     <div class="section-header">
       <div class="section-number">01</div>
       <div class="section-title-wrap">
@@ -114,6 +192,10 @@
 
   <!-- SECTION 2: EL HECHO -->
   <section class="section s2 reveal" id="hecho">
+    <div class="parallax-element s2-graphic" data-parallax-speed="0.16">
+      <img src="images/lunar_module.png" alt="Módulo Lunar Eagle">
+    </div>
+
     <div class="section-header">
       <div class="section-number">02</div>
       <div class="section-title-wrap">
@@ -174,6 +256,10 @@
 
   <!-- SECTION 3: FUENTE HISTÓRICA -->
   <section class="section s3 reveal" id="fuente">
+    <div class="parallax-element s3-graphic" data-parallax-speed="-0.18">
+      <img src="images/astronaut_helmet.png" alt="Casco de Astronauta">
+    </div>
+
     <div class="section-header">
       <div class="section-number">03</div>
       <div class="section-title-wrap">
@@ -208,7 +294,20 @@
             <svg viewBox="0 0 24 24" width="32" height="32"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
-        <button class="video-sound-toggle" id="kennedySoundToggle" type="button">🔇 Activar sonido</button>
+        <div class="video-controls-overlay" id="kennedyControls">
+          <button class="video-sound-toggle" id="kennedySoundToggle" type="button">🔇 Activar sonido</button>
+          <div class="video-volume-slider-wrap">
+            <input
+              type="range"
+              id="kennedyVolumeSlider"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.5"
+              title="Volumen"
+            >
+          </div>
+        </div>
       </div>
 
       <div class="highlight-card">
@@ -230,6 +329,10 @@
 
   <!-- SECTION 4: IMPACTO -->
   <section class="section s4 reveal" id="impacto">
+    <div class="parallax-element s4-graphic" data-parallax-speed="0.14">
+      <img src="images/earth.png" alt="Planeta Tierra">
+    </div>
+
     <div class="section-header">
       <div class="section-number">04</div>
       <div class="section-title-wrap">
@@ -266,6 +369,10 @@
 
   <!-- SECTION 5: PRESENTE -->
   <section class="section s5 reveal" id="presente">
+    <div class="parallax-element s5-graphic" data-parallax-speed="-0.12">
+      <img src="images/modern_satellite.png" alt="Satélite Moderno">
+    </div>
+
     <div class="section-header">
       <div class="section-number">05</div>
       <div class="section-title-wrap">
@@ -303,8 +410,8 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="footer-title">Historia 5 · Quinto Año · Trabajo Práctico</div>
-    <div class="footer-sub">Entrega: 30 de junio · Exposición oral: 2 de julio</div>
+    <div class="footer-title">Historia · Quinto Año · Trabajo Práctico</div>
+    <div class="footer-sub">Entrega: 30 de junio · Exposición oral: 3 de julio</div>
   </footer>
 </div>
 
