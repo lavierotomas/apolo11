@@ -441,6 +441,10 @@ const GameController = {
       if (crewOverlay) {
         crewOverlay.classList.add('hidden');
       }
+      
+      // Remover bloqueo de scroll de los menús de selección inicial
+      document.body.classList.remove('overlay-active');
+      
       if (selectedMode === 'info') {
         this.logMessage('MODO INFORMATIVO SELECCIONADO.');
       } else if (selectedMode === 'game') {

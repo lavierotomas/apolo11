@@ -22,6 +22,36 @@
     overflow-x: hidden;
   }
 
+  /* CUSTOM SCROLLBAR */
+  /* Para navegadores Chrome, Edge, Safari, Opera */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--black);
+    border-left: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(245, 200, 66, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--black);
+    transition: background 0.3s;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 200, 66, 0.6);
+    box-shadow: 0 0 10px rgba(245, 200, 66, 0.4);
+  }
+
+  /* Para Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245, 200, 66, 0.25) var(--black);
+  }
+
   /* STARFIELD */
   #stars-canvas {
     position: fixed;
@@ -769,8 +799,9 @@
     overflow: hidden;
   }
 
-  /* Game mode state helper classes */
-  body.game-mode-active {
+  /* Helper classes para estados de scroll */
+  body.game-mode-active,
+  body.overlay-active {
     overflow: hidden !important;
   }
 
